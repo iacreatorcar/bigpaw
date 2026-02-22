@@ -13,7 +13,7 @@
     "dogs",
     "verification"
   ],
-  "author": "",
+  "author": "Carmine D'alise",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.3",

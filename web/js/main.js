@@ -1,5 +1,5 @@
 // file: web/js/main.js
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://bigpaw-backend.onrender.com/api';
 
 // Carica le statistiche
 async function caricaStatistiche() {

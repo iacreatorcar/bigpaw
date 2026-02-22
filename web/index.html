@@ -352,20 +352,22 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const API_URL = 'http://localhost:3000/api';
-        let tipiChart, ratingChart;
-        let currentLang = localStorage.getItem('bigpaw_lang') || 'it';
+    <!-- Scripts - MODIFICATO -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 🔥 MODIFICATO: usa variabile d'ambiente Vercel se disponibile, altrimenti localhost
+    const API_URL = import.meta.env?.VITE_API_URL || 'http://localhost:3000/api';
+    
+    let tipiChart, ratingChart;
+    let currentLang = localStorage.getItem('bigpaw_lang') || 'it';
 
-        // Funzione cambio lingua (da implementare)
-        function changeLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('bigpaw_lang', lang);
-            alert('Lingua cambiata in: ' + lang + ' (traduzioni in arrivo!)');
-            // Qui inseriremo la logica di traduzione
-        }
+    // Funzione cambio lingua
+    function changeLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('bigpaw_lang', lang);
+        alert('🌍 Lingua cambiata in: ' + lang);
+        // Qui puoi aggiungere la logica di traduzione
+    }
 
         // Carica tutti i dati
         async function caricaDati() {

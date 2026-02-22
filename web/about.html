@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigPaw - Chi sono</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/translations.js"></script>
+    <script src="js/i18n.js"></script>
+</head>
+<body>
+    <!-- Navbar con LOGO CLICCABILE -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="assets/logo.svg" alt="BigPaw" height="50">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html"><i class="bi bi-speedometer2 me-1"></i> <span data-i18n="dashboard">Dashboard</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="map.html"><i class="bi bi-map me-1"></i> <span data-i18n="map">Mappa</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="about.html"><i class="bi bi-person me-1"></i> <span data-i18n="about">Chi sono</span></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-globe2 me-1"></i> <span data-i18n="language">Lingua</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('it')">🇮🇹 <span data-i18n="italian">Italiano</span></a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">🇬🇧 <span data-i18n="english">English</span></a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('es')">🇪🇸 <span data-i18n="spanish">Español</span></a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('fr')">🇫🇷 <span data-i18n="french">Français</span></a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('de')">🇩🇪 <span data-i18n="german">Deutsch</span></a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('ja')">🇯🇵 <span data-i18n="japanese">日本語</span></a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('zh')">🇨🇳 <span data-i18n="chinese">中文</span></a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Pulsanti navigazione -->
+    <div class="container mt-3">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> <span data-i18n="back">Torna indietro</span>
+        </a>
+        <a href="index.html" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-house-door"></i> <span data-i18n="dashboard">Dashboard</span>
+        </a>
+        <a href="map.html" class="btn btn-outline-info btn-sm">
+            <i class="bi bi-map"></i> <span data-i18n="map">Mappa</span>
+        </a>
+    </div>
+
+    <!-- Contenuto -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-body text-center p-5">
+                        <h1 data-i18n="about_title">Chi sono</h1>
+                        <p class="lead" data-i18n="about_subtitle">La storia dietro BigPaw</p>
+                        <hr class="my-4">
+                        
+                        <!-- QUI METTEREMO LA TUA STORIA -->
+                        <div class="text-start">
+    <p class="fw-bold fs-4">🐾 Carmine D'alise</p>
+    <p class="lead mb-4">Sviluppatore e amante dei cani di taglia media e grande</p>
+    
+    <div class="bg-light p-4 rounded-3 mb-4">
+        <p class="mb-3">
+            <i class="bi bi-quote fs-1 text-primary opacity-50"></i>
+        </p>
+        <p class="fs-5" style="font-style: italic;">
+            Questo progetto nasce per esperienza personale e dalla frustrazione 
+            di non riuscire a trovare facilmente strutture veramente dog-friendly 
+            per cani di taglia Media e Grande.
+        </p>
+        <p class="fs-5" style="font-style: italic;">
+            Troppe preferenze nelle strutture e con questo progetto vorrei dare voce 
+            a chi come me vorrebbe delle conferme, non dog friendly per marketing 
+            <strong class="text-danger">PLEASE</strong>!
+        </p>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-6 text-center">
+            <h3 class="text-primary">🐕</h3>
+            <p class="mb-0"><strong>Taglia media</strong></p>
+            <small class="text-muted">15-25 kg</small>
+        </div>
+        <div class="col-6 text-center">
+            <h3 class="text-primary">🦮</h3>
+            <p class="mb-0"><strong>Taglia grande</strong></p>
+            <small class="text-muted">>25 kg</small>
+        </div>
+    </div>
+</div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white mt-5 py-4">
+        <div class="container text-center">
+            <p class="mb-0">© 2026 BigPaw - Dog Friendly Verified</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!-- file: web/map.html -->
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigPaw - Mappa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        #map {
+            height: 600px;
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .info-box h5 {
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: bold;
+        }
+        .form-check {
+            margin-bottom: 10px;
+        }
+        .form-check-label {
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        .btn-filtri {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn-filtri:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+        .btn-navigation {
+            margin-bottom: 20px;
+        }
+        .btn-navigation .btn {
+            margin-right: 10px;
+        }
+        .dropdown-menu {
+            min-width: 200px;
+            padding: 10px 0;
+        }
+        .dropdown-item {
+            padding: 8px 20px;
+            font-size: 0.95rem;
+        }
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+        @media (max-width: 767px) {
+            #map {
+                height: 400px;
+            }
+            .navbar-nav {
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar COMPLETA con logo e menu lingue -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <!-- Logo cliccabile -->
+            <a class="navbar-brand" href="dashboard.html">
+                <img src="assets/logo.svg" alt="BigPaw" height="50">
+            </a>
+            
+            <!-- Toggler per mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Menu principale -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <!-- Link Dashboard -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    
+                    <!-- Link Mappa (attivo) -->
+                    <li class="nav-item">
+                        <a class="nav-link active" href="map.html">
+                            <i class="bi bi-map me-1"></i> Mappa
+                        </a>
+                    </li>
+                    
+                    <!-- Link About -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">
+                            <i class="bi bi-person me-1"></i> Chi sono
+                        </a>
+                    </li>
+                    
+                    <!-- Dropdown LINGUE (mapamondo) -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-globe2 me-1"></i> Lingua
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('it')">🇮🇹 Italiano</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">🇬🇧 English</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('es')">🇪🇸 Español</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('fr')">🇫🇷 Français</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('de')">🇩🇪 Deutsch</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('ja')">🇯🇵 日本語</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('zh')">🇨🇳 中文</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Pulsanti navigazione (dopo navbar) -->
+    <div class="container mt-3 btn-navigation">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Torna indietro
+        </a>
+        <a href="dashboard.html" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-house-door"></i> Dashboard
+        </a>
+    </div>
+
+    <div class="container mt-2">
+        <div class="row">
+            <div class="col-12">
+                <h2>🗺️ Mappa delle strutture dog-friendly</h2>
+                <p class="lead">Clicca sui marker per vedere i dettagli delle strutture verificate</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="info-box">
+                    <h5><i class="bi bi-funnel me-2"></i>Filtri</h5>
+                    
+                    <!-- Riga 1: Hotel, B&B, Ristoranti -->
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="hotel" checked>
+                                <label class="form-check-label" for="hotel">🏨 Hotel</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="bb" checked>
+                                <label class="form-check-label" for="bb">🏠 B&B</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="ristorante" checked>
+                                <label class="form-check-label" for="ristorante">🍽️ Ristoranti</label>
+                            </div>
+                        </div>
+                        
+                        <!-- Riga 2: Agriturismi, Campeggi, Balneari -->
+                        <div class="col-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="agriturismo" checked>
+                                <label class="form-check-label" for="agriturismo">🌾 Agriturismi</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="campeggio" checked>
+                                <label class="form-check-label" for="campeggio">⛺ Campeggi</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="balneare" checked>
+                                <label class="form-check-label" for="balneare">🏖️ Strutture Balneari</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Riga 3: Villaggi, Resort, Altro -->
+                    <div class="row mt-2">
+                        <div class="col-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="villaggio" checked>
+                                <label class="form-check-label" for="villaggio">🏘️ Villaggi</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="resort" checked>
+                                <label class="form-check-label" for="resort">⭐ Resort</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bottone applica filtri -->
+                    <button class="btn btn-filtri" onclick="applicaFiltri()">
+                        <i class="bi bi-check2-circle me-2"></i>Applica filtri
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white mt-5 py-4">
+        <div class="container text-center">
+            <p class="mb-0">© 2026 BigPaw - Dog Friendly Verified</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let map;
+        let markers = [];
+        let currentLang = localStorage.getItem('bigpaw_lang') || 'it';
+        
+        // Funzione cambio lingua
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('bigpaw_lang', lang);
+            alert('🌍 Lingua cambiata in: ' + lang.toUpperCase());
+            // Qui inseriremo le traduzioni
+        }
+        
+        // Inizializza mappa
+        function initMap() {
+            // Centro mappa su Roma
+            map = L.map('map').setView([41.9028, 12.4964], 6);
+            
+            // Aggiungi tile layer (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Carica strutture
+            caricaStrutture();
+        }
+        
+        // Carica strutture dall'API
+        async function caricaStrutture() {
+            try {
+                const response = await fetch(`${API_URL}/structures`);
+                const strutture = await response.json();
+                
+                // Pulisci marker esistenti
+                markers.forEach(m => map.removeLayer(m));
+                markers = [];
+                
+                // Aggiungi marker per ogni struttura
+                strutture.forEach(struttura => {
+                    if (struttura.coordinate && struttura.coordinate.coordinates) {
+                        const [lng, lat] = struttura.coordinate.coordinates;
+                        
+                        // Scegli icona in base al tipo
+                        const icon = L.divIcon({
+                            className: 'custom-marker',
+                            html: `<div style="background-color: ${getColor(struttura.tipo)}; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: bold; border: 2px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">${getIcon(struttura.tipo)}</div>`
+                        });
+                        
+                        const marker = L.marker([lat, lng], { icon }).addTo(map);
+                        
+                        // Popup con info
+                        marker.bindPopup(`
+                            <div style="min-width: 220px; padding: 5px;">
+                                <h6 style="margin-bottom: 8px; font-weight: bold;">${struttura.nome}</h6>
+                                <p style="margin-bottom: 5px; font-size: 0.9rem;">
+                                    <span class="badge bg-secondary">${struttura.tipo}</span>
+                                </p>
+                                <p style="margin-bottom: 5px; font-size: 0.9rem;">
+                                    <strong>⭐ ${struttura.mediaRating?.toFixed(1) || 'Nuova'}</strong> 
+                                    (${struttura.totaleVerifiche || 0} verifiche)
+                                </p>
+                                <p style="margin-bottom: 8px; font-size: 0.85rem; color: #666;">
+                                    <i class="bi bi-geo-alt"></i> ${struttura.indirizzo.split(',')[0]}
+                                </p>
+                                <a href="struttura.html?id=${struttura._id}" class="btn btn-sm btn-primary w-100">
+                                    <i class="bi bi-eye"></i> Vedi dettagli
+                                </a>
+                            </div>
+                        `);
+                        
+                        markers.push(marker);
+                    }
+                });
+            } catch (error) {
+                console.error('Errore caricamento strutture:', error);
+            }
+        }
+        
+        // Colori per tipo struttura (AGGIORNATO con nuovi tipi)
+        function getColor(tipo) {
+            const colors = {
+                hotel: '#4CAF50',
+                'b&b': '#2196F3',
+                ristorante: '#FF9800',
+                agriturismo: '#9C27B0',
+                campeggio: '#795548',
+                'struttura balneare': '#00BCD4',
+                villaggio: '#FF5722',
+                resort: '#E91E63',
+                bar: '#FF5722',
+                altro: '#607D8B'
+            };
+            return colors[tipo] || '#607D8B';
+        }
+        
+        // Icone per tipo struttura (AGGIORNATO con nuovi tipi)
+        function getIcon(tipo) {
+            const icons = {
+                hotel: '🏨',
+                'b&b': '🏠',
+                ristorante: '🍽️',
+                agriturismo: '🌾',
+                campeggio: '⛺',
+                'struttura balneare': '🏖️',
+                villaggio: '🏘️',
+                resort: '⭐',
+                bar: '🍺',
+                altro: '📍'
+            };
+            return icons[tipo] || '📍';
+        }
+        
+        // Filtri (AGGIORNATO con nuovi tipi)
+        function applicaFiltri() {
+            const filtri = {
+                hotel: document.getElementById('hotel')?.checked || true,
+                bb: document.getElementById('bb')?.checked || true,
+                ristorante: document.getElementById('ristorante')?.checked || true,
+                agriturismo: document.getElementById('agriturismo')?.checked || true,
+                campeggio: document.getElementById('campeggio')?.checked || true,
+                balneare: document.getElementById('balneare')?.checked || true,
+                villaggio: document.getElementById('villaggio')?.checked || true,
+                resort: document.getElementById('resort')?.checked || true
+            };
+            
+            markers.forEach(marker => {
+                // Estrai il tipo dal popup
+                const popupContent = marker.getPopup()?.getContent() || '';
+                let tipo = '';
+                
+                if (popupContent.includes('hotel')) tipo = 'hotel';
+                else if (popupContent.includes('b&b')) tipo = 'b&b';
+                else if (popupContent.includes('ristorante')) tipo = 'ristorante';
+                else if (popupContent.includes('agriturismo')) tipo = 'agriturismo';
+                else if (popupContent.includes('campeggio')) tipo = 'campeggio';
+                else if (popupContent.includes('balneare')) tipo = 'struttura balneare';
+                else if (popupContent.includes('villaggio')) tipo = 'villaggio';
+                else if (popupContent.includes('resort')) tipo = 'resort';
+                
+                let shouldShow = false;
+                
+                if (tipo === 'hotel' && filtri.hotel) shouldShow = true;
+                else if (tipo === 'b&b' && filtri.bb) shouldShow = true;
+                else if (tipo === 'ristorante' && filtri.ristorante) shouldShow = true;
+                else if (tipo === 'agriturismo' && filtri.agriturismo) shouldShow = true;
+                else if (tipo === 'campeggio' && filtri.campeggio) shouldShow = true;
+                else if (tipo === 'struttura balneare' && filtri.balneare) shouldShow = true;
+                else if (tipo === 'villaggio' && filtri.villaggio) shouldShow = true;
+                else if (tipo === 'resort' && filtri.resort) shouldShow = true;
+                
+                if (shouldShow) {
+                    if (!map.hasLayer(marker)) marker.addTo(map);
+                } else {
+                    if (map.hasLayer(marker)) map.removeLayer(marker);
+                }
+            });
+        }
+        
+        // Avvia mappa quando la pagina è caricata
+        document.addEventListener('DOMContentLoaded', initMap);
+    </script>
+</body>
+</html>

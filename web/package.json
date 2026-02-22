@@ -1,0 +1,19 @@
+{
+  "name": "bigpaw-web",
+  "version": "1.0.0",
+  "description": "Frontend per BigPaw - Dog Friendly Verified",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["dog-friendly", "pets", "verification"],
+  "author": "Carmine D'alise",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "vite": "^4.5.0"
+  }
+}

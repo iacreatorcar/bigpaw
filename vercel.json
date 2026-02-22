@@ -1,5 +1,18 @@
 {
-  "buildCommand": "cd web && npx vite build",
-  "outputDirectory": "web/dist",
-  "installCommand": "cd web && npm install"
+  "builds": [
+    {
+      "src": "web/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist",
+        "buildCommand": "cd web && npx --yes vite build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/dist/$1"
+    }
+  ]
 }

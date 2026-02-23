@@ -53,3 +53,8 @@ temp/
 # Config files
 web/.npmrc
 web/vercel.json
+# Vercel
+.vercel
+vercel.json
+web/.vercel
+web/vercel.json

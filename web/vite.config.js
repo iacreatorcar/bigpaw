@@ -9,7 +9,6 @@ export default defineConfig({
         map: resolve(__dirname, 'map.html'),
         about: resolve(__dirname, 'about.html'),
         struttura: resolve(__dirname, 'struttura.html'),
-        landing: resolve(__dirname, 'landing.html'), // <-- aggiunto
       },
     },
   },

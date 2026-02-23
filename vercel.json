@@ -1,12 +1,18 @@
 {
-  "rewrites": [
+  "builds": [
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "src": "web/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist",
+        "buildCommand": "cd web && npx --yes vite build"
+      }
     }
   ],
-  "buildCommand": "cd web && npm run build",
-  "outputDirectory": "web/dist",
-  "framework": "vite",
-  "installCommand": "cd web && npm install"
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
 }

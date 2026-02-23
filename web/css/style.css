@@ -689,3 +689,41 @@ footer p:last-child {
 .shadow-hover:hover {
     box-shadow: var(--shadow-md);
 }
+/* Stile per il form di certificazione */
+.certification-form .card {
+    border: none;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #ffffff, #f8f9fa);
+}
+
+.certification-form .form-control,
+.certification-form .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 15px;
+    padding: 12px 15px;
+    transition: all 0.3s;
+}
+
+.certification-form .form-control:focus,
+.certification-form .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.certification-form .btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.certification-form .btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+}
+
+.form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}

@@ -394,5 +394,43 @@
         // Avvia mappa quando la pagina è caricata
         document.addEventListener('DOMContentLoaded', initMap);
     </script>
+    <!-- Script per il form di certificazione -->
+<script>
+document.getElementById('certificationForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Raccogli dati
+    const formData = {
+        nome: document.getElementById('strutturaNome').value,
+        tipo: document.getElementById('strutturaTipo').value,
+        email: document.getElementById('strutturaEmail').value,
+        telefono: document.getElementById('strutturaTel').value,
+        indirizzo: document.getElementById('strutturaIndirizzo').value,
+        sito: document.getElementById('strutturaSito').value,
+        servizi: {
+            ciotole: document.getElementById('servCiotole').checked,
+            cuscini: document.getElementById('servCuscini').checked,
+            giardino: document.getElementById('servGiardino').checked,
+            menupet: document.getElementById('servMenu').checked,
+            dogsitter: document.getElementById('servSitter').checked,
+            recinto: document.getElementById('servRecinto').checked
+        },
+        pesoMax: document.getElementById('pesoMax').value,
+        note: document.getElementById('note').value
+    };
+    
+    console.log('Richiesta certificazione:', formData);
+    
+    try {
+        // Qui invieremo i dati al backend (dopo)
+        // Per ora simuliamo l'invio
+        alert('✅ Grazie per la richiesta! Ti contatteremo entro 48 ore per organizzare la verifica.');
+        document.getElementById('certificationForm').reset();
+    } catch (error) {
+        console.error('Errore:', error);
+        alert('❌ Errore durante l\'invio. Riprova più tardi.');
+    }
+});
+</script>
 </body>
 </html>

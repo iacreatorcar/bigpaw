@@ -25,7 +25,7 @@ const dogSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Schema per l'utente
+// Schema per l'utente (UNICO)
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -63,18 +63,15 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: null
+  },
+  // NUOVO CAMPO (se vuoi aggiungerlo)
+  ruolo: {
+    type: String,
+    enum: ['visitatore', 'utente_base', 'verificatore', 'ambassador', 'founder'],
+    default: 'utente_base'
   }
 }, {
   timestamps: true
 });
 
 module.exports = mongoose.model('User', userSchema);
-const userSchema = new mongoose.Schema({
-    // ... altri campi (username, email, password, ecc.)
-    ruolo: {
-        type: String,
-        enum: ['visitatore', 'utente_base', 'verificatore', 'ambassador', 'founder'],
-        default: 'utente_base' // Questo è il ruolo di DEFAULT
-    },
-    // ... eventuali altri campi
-});

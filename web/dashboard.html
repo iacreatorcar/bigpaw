@@ -1,0 +1,913 @@
+<!-- file: web/dashboard.html -->
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigPaw - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Scripts di traduzione -->
+    <script src="js/translations.js"></script>
+    <script src="js/i18n.js"></script>
+    <style>
+        .dashboard-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        .dashboard-card .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: none;
+            padding: 20px;
+        }
+        .dashboard-card .card-body {
+            padding: 25px;
+        }
+        .stat-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3);
+        }
+        .stat-circle h3 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0;
+            line-height: 1;
+        }
+        .stat-circle p {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .stat-box {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            transition: background 0.3s;
+        }
+        .stat-box:hover {
+            background: #e9ecef;
+        }
+        .stat-box i {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .stat-box h4 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0 5px;
+            color: #333;
+        }
+        .stat-box p {
+            color: #666;
+            margin: 0;
+            font-size: 1rem;
+        }
+        .recent-item {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background 0.3s;
+        }
+        .recent-item:hover {
+            background: #f8f9fa;
+        }
+        .recent-item:last-child {
+            border-bottom: none;
+        }
+        .badge-custom {
+            font-size: 0.9rem;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+        .btn-view-all {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn-view-all:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+        /* Stile per il dropdown lingue */
+        .dropdown-menu {
+            min-width: 200px;
+            padding: 10px 0;
+        }
+        .dropdown-item {
+            padding: 8px 20px;
+            font-size: 0.95rem;
+        }
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+        .dropdown-divider {
+            margin: 8px 0;
+        }
+        /* Responsive per mobile */
+        @media (max-width: 767px) {
+            .navbar-nav {
+                margin-top: 15px;
+            }
+            .dropdown-menu {
+                position: static !important;
+                transform: none !important;
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar COMPLETA con logo, menu lingue e pulsanti autenticazione -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <!-- Logo cliccabile -->
+            <a class="navbar-brand" href="index.html">
+                <img src="assets/logo.svg" alt="BigPaw" height="50">
+            </a>
+            
+            <!-- Toggler per mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Menu principale -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <!-- Link Dashboard (attivo) -->
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard.html">
+                            <i class="bi bi-speedometer2 me-1"></i> <span data-i18n="dashboard">Dashboard</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Link Mappa -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="map.html">
+                            <i class="bi bi-map me-1"></i> <span data-i18n="map">Mappa</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Link About -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">
+                            <i class="bi bi-person me-1"></i> <span data-i18n="about">Chi sono</span>
+                        </a>
+                    </li>
+                    
+                    <!-- PULSANTI ACCEDI/REGISTRATI -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> <span data-i18n="login">Accedi</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#registerModal">
+                            <i class="bi bi-person-plus me-1"></i> <span data-i18n="register">Registrati</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Dropdown LINGUE (mapamondo) -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-globe2 me-1"></i> <span data-i18n="language">Lingua</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('it')">🇮🇹 <span data-i18n="italian">Italiano</span></a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">🇬🇧 <span data-i18n="english">English</span></a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('es')">🇪🇸 <span data-i18n="spanish">Español</span></a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('fr')">🇫🇷 <span data-i18n="french">Français</span></a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('de')">🇩🇪 <span data-i18n="german">Deutsch</span></a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('ja')">🇯🇵 <span data-i18n="japanese">日本語</span></a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeLanguage('zh')">🇨🇳 <span data-i18n="chinese">中文</span></a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenuto principale -->
+    <div class="container mt-5">
+        <!-- Header -->
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold" style="color: #333;" data-i18n="dashboard_title">🐾 BigPaw Dashboard</h1>
+                <p class="lead text-muted" data-i18n="dashboard_subtitle">Monitora le strutture dog-friendly verificate dalla community</p>
+            </div>
+        </div>
+
+        <!-- Statistiche principali -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stat-box">
+                    <i class="bi bi-building"></i>
+                    <h4 id="totaleStrutture">0</h4>
+                    <p data-i18n="stats_total_structures">Strutture totali</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-box">
+                    <i class="bi bi-check-circle"></i>
+                    <h4 id="totaleVerifiche">0</h4>
+                    <p data-i18n="stats_total_verifications">Verifiche effettuate</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-box">
+                    <i class="bi bi-star-fill" style="color: #ffc107;"></i>
+                    <h4 id="mediaRating">0.0</h4>
+                    <p data-i18n="stats_avg_rating">Rating medio</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-box">
+                    <i class="bi bi-graph-up"></i>
+                    <h4 id="caniGrandi">0</h4>
+                    <p data-i18n="stats_large_dogs">Cani >25kg verificati</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grafici e statistiche -->
+        <div class="row">
+            <!-- Grafico a torta per tipi struttura -->
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <i class="bi bi-pie-chart me-2"></i> <span data-i18n="chart_structure_types">Tipi di Strutture</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="chartTipi"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grafico rating -->
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <i class="bi bi-bar-chart me-2"></i> <span data-i18n="chart_rating_distribution">Distribuzione Rating</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="chartRating"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ultime strutture e verifiche -->
+        <div class="row mt-4">
+            <!-- Ultime strutture aggiunte -->
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <i class="bi bi-building-add me-2"></i> <span data-i18n="recent_structures">Ultime Strutture</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="ultimeStrutture" class="list-group list-group-flush">
+                            <!-- Caricate via JS -->
+                        </div>
+                        <div class="text-center p-3">
+                            <a href="map.html" class="btn btn-view-all" data-i18n="view_all">Vedi tutte le strutture</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ultime verifiche -->
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <i class="bi bi-check2-circle me-2"></i> <span data-i18n="recent_verifications">Ultime Verifiche</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="ultimeVerifiche" class="list-group list-group-flush">
+                            <!-- Caricate via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top strutture per rating -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <i class="bi bi-trophy-fill me-2"></i> <span data-i18n="top_structures">Top 5 Strutture</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="table_rank">#</th>
+                                        <th data-i18n="table_name">Nome</th>
+                                        <th data-i18n="table_type">Tipo</th>
+                                        <th data-i18n="table_rating">Rating</th>
+                                        <th data-i18n="table_verifications">Verifiche</th>
+                                        <th data-i18n="table_max_weight">Peso max</th>
+                                        <th data-i18n="table_actions">Azioni</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="topStrutture">
+                                    <!-- Caricate via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sezione Richiedi Certificazione -->
+    <section class="container mt-5">
+        <div class="row">
+            <div class="col-12 text-center mb-4">
+                <h2 class="display-5 fw-bold" data-i18n="certification_title">🏆 Richiedi la certificazione BigPaw</h2>
+                <p class="lead" data-i18n="certification_subtitle">La tua struttura è veramente dog-friendly? Ottieni il certificato ufficiale!</p>
+            </div>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-4 p-lg-5">
+                        
+                        <!-- FORM DI RICHIESTA CERTIFICAZIONE -->
+                        <form id="certificationForm">
+                            <!-- Nome struttura e Tipo -->
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold" data-i18n="structure_name_label">🏨 Nome struttura *</label>
+                                    <input type="text" class="form-control form-control-lg" id="strutturaNome" required data-i18n-placeholder="structure_name_placeholder" placeholder="es. Hotel Villa Dog">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold" data-i18n="structure_type_label">📋 Tipo struttura *</label>
+                                    <select class="form-select form-select-lg" id="strutturaTipo" required>
+                                        <option value="" data-i18n="structure_type_placeholder">Seleziona...</option>
+                                        <option value="hotel" data-i18n="hotel">Hotel</option>
+                                        <option value="bb" data-i18n="bb">B&B</option>
+                                        <option value="ristorante" data-i18n="ristorante">Ristorante</option>
+                                        <option value="agriturismo" data-i18n="agriturismo">Agriturismo</option>
+                                        <option value="campeggio" data-i18n="campeggio">Campeggio</option>
+                                        <option value="balneare" data-i18n="balneare">Struttura Balneare</option>
+                                        <option value="villaggio" data-i18n="villaggio">Villaggio</option>
+                                        <option value="resort" data-i18n="resort">Resort</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Email e Telefono -->
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold" data-i18n="email_label">📧 Email *</label>
+                                    <input type="email" class="form-control form-control-lg" id="strutturaEmail" required data-i18n-placeholder="email_placeholder" placeholder="info@tuastruttura.it">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold" data-i18n="phone_label">📞 Telefono</label>
+                                    <input type="tel" class="form-control form-control-lg" id="strutturaTel" data-i18n-placeholder="phone_placeholder" placeholder="+39 123 4567890">
+                                </div>
+                            </div>
+                            
+                            <!-- Indirizzo -->
+                            <div class="mt-3">
+                                <label class="form-label fw-bold" data-i18n="address_label">📍 Indirizzo completo *</label>
+                                <input type="text" class="form-control form-control-lg" id="strutturaIndirizzo" required data-i18n-placeholder="address_placeholder" placeholder="Via Roma 1, Città, CAP">
+                            </div>
+                            
+                            <!-- Sito web -->
+                            <div class="mt-3">
+                                <label class="form-label fw-bold" data-i18n="website_label">🌐 Sito web</label>
+                                <input type="url" class="form-control form-control-lg" id="strutturaSito" data-i18n-placeholder="website_placeholder" placeholder="https://www.tuastruttura.it">
+                            </div>
+                            
+                            <!-- Servizi per cani -->
+                            <div class="mt-4">
+                                <h5 class="fw-bold mb-3" data-i18n="services_title">🐕 Servizi offerti per cani:</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="ciotole" id="servCiotole">
+                                            <label class="form-check-label" data-i18n="service_ciotole" for="servCiotole">Ciotole per acqua sempre disponibili</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="cuscini" id="servCuscini">
+                                            <label class="form-check-label" data-i18n="service_cuscini" for="servCuscini">Cuscini/lettini per cani</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="giardino" id="servGiardino">
+                                            <label class="form-check-label" data-i18n="service_giardino" for="servGiardino">Giardino/area esterna dedicata</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="menupet" id="servMenu">
+                                            <label class="form-check-label" data-i18n="service_menupet" for="servMenu">Menù dedicato per cani</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="dogsitter" id="servSitter">
+                                            <label class="form-check-label" data-i18n="service_dogsitter" for="servSitter">Dog sitter su richiesta</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="recinto" id="servRecinto">
+                                            <label class="form-check-label" data-i18n="service_recinto" for="servRecinto">Area recintata per sfogo</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Peso massimo -->
+                            <div class="mt-4">
+                                <label class="form-label fw-bold" data-i18n="weight_label">📏 Peso massimo cani accolti *</label>
+                                <select class="form-select form-select-lg" id="pesoMax" required>
+                                    <option value="" data-i18n="weight_placeholder">Seleziona...</option>
+                                    <option value="25" data-i18n="weight_25">Fino a 25 kg (taglia media)</option>
+                                    <option value="40" data-i18n="weight_40">Fino a 40 kg (taglia grande)</option>
+                                    <option value="60" data-i18n="weight_60">Fino a 60 kg (taglia molto grande)</option>
+                                    <option value="100" data-i18n="weight_100">Oltre 60 kg (nessun limite)</option>
+                                    <option value="0" data-i18n="weight_0">Nessun limite di peso</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Note aggiuntive -->
+                            <div class="mt-4">
+                                <label class="form-label fw-bold" data-i18n="notes_label">📝 Note aggiuntive</label>
+                                <textarea class="form-control" id="note" rows="3" data-i18n-placeholder="notes_placeholder" placeholder="Eventuali informazioni aggiuntive..."></textarea>
+                            </div>
+                            
+                            <!-- Bottone invio -->
+                            <div class="mt-5 text-center">
+                                <button type="submit" class="btn btn-success btn-lg px-5 py-3 rounded-pill">
+                                    <i class="bi bi-check-circle me-2"></i><span data-i18n="submit_button">Richiedi verifica e certificato</span>
+                                </button>
+                                <p class="text-muted small mt-3" data-i18n="required_fields">* campi obbligatori. Ti risponderemo entro 48 ore.</p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white mt-5 py-4">
+        <div class="container text-center">
+            <p class="mb-0" data-i18n="footer_copyright">© 2026 BigPaw - Dog Friendly Verified</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 🔥 DETERMINA URL API IN BASE ALL'AMBIENTE
+        const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://localhost:3000/api'
+            : 'https://bigpaw-backend.onrender.com/api';
+        
+        console.log('🌐 API_URL:', API_URL);
+        
+        let tipiChart, ratingChart;
+        let currentLang = localStorage.getItem('bigpaw_lang') || 'it';
+
+        // Funzione cambio lingua (ora usa updatePageText di i18n.js)
+        function changeLanguage(lang) {
+            if (typeof window.changeLanguage === 'function') {
+                window.changeLanguage(lang);
+            } else {
+                currentLang = lang;
+                localStorage.setItem('bigpaw_lang', lang);
+                alert('🌍 Lingua cambiata in: ' + lang);
+                location.reload();
+            }
+        }
+
+        // Carica tutti i dati
+        async function caricaDati() {
+            try {
+                // Carica strutture
+                const strutture = await fetch(`${API_URL}/structures`).then(r => r.json());
+                
+                // Calcola statistiche base
+                document.getElementById('totaleStrutture').textContent = strutture.length;
+                
+                // Raccogli dati per grafici
+                const tipiCount = {};
+                const ratingCount = {1:0, 2:0, 3:0, 4:0, 5:0};
+                let totRating = 0;
+                let totVerifiche = 0;
+                let caniGrandi = 0;
+                let tutteVerifiche = [];
+                
+                // Analizza ogni struttura
+                for (const s of strutture) {
+                    // Conta tipi
+                    tipiCount[s.tipo] = (tipiCount[s.tipo] || 0) + 1;
+                    
+                    // Carica verifiche per questa struttura
+                    if (s._id) {
+                        try {
+                            const verifiche = await fetch(`${API_URL}/verifications/struttura/${s._id}`).then(r => r.json());
+                            totVerifiche += verifiche.length;
+                            tutteVerifiche = tutteVerifiche.concat(verifiche);
+                            
+                            verifiche.forEach(v => {
+                                if (v.rating) {
+                                    totRating += v.rating;
+                                    ratingCount[v.rating] = (ratingCount[v.rating] || 0) + 1;
+                                }
+                                if (v.pesoCane > 25) caniGrandi++;
+                            });
+                        } catch (e) {
+                            console.log('Nessuna verifica per', s.nome);
+                        }
+                    }
+                }
+                
+                // Aggiorna statistiche
+                document.getElementById('totaleVerifiche').textContent = totVerifiche;
+                document.getElementById('mediaRating').textContent = totVerifiche > 0 ? (totRating / totVerifiche).toFixed(1) : '0.0';
+                document.getElementById('caniGrandi').textContent = caniGrandi;
+                
+                // Crea grafici
+                creaGrafici(tipiCount, ratingCount);
+                
+                // Mostra ultime strutture
+                mostraUltimeStrutture(strutture.slice(0, 5));
+                
+                // Mostra ultime verifiche
+                mostraUltimeVerifiche(tutteVerifiche.slice(0, 5));
+                
+                // Mostra top strutture
+                mostraTopStrutture(strutture);
+                
+            } catch (error) {
+                console.error('Errore caricamento dati:', error);
+            }
+        }
+
+        // Crea grafici
+        function creaGrafici(tipiCount, ratingCount) {
+            // Grafico tipi
+            const ctxTipi = document.getElementById('chartTipi').getContext('2d');
+            if (tipiChart) tipiChart.destroy();
+            
+            tipiChart = new Chart(ctxTipi, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(tipiCount).map(t => t.toUpperCase()),
+                    datasets: [{
+                        data: Object.values(tipiCount),
+                        backgroundColor: [
+                            '#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#FF5722', '#607D8B'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            // Grafico rating
+            const ctxRating = document.getElementById('chartRating').getContext('2d');
+            if (ratingChart) ratingChart.destroy();
+            
+            ratingChart = new Chart(ctxRating, {
+                type: 'bar',
+                data: {
+                    labels: ['1⭐', '2⭐', '3⭐', '4⭐', '5⭐'],
+                    datasets: [{
+                        label: 'Numero verifiche',
+                        data: [ratingCount[1], ratingCount[2], ratingCount[3], ratingCount[4], ratingCount[5]],
+                        backgroundColor: '#ffc107',
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Mostra ultime strutture
+        function mostraUltimeStrutture(strutture) {
+            const container = document.getElementById('ultimeStrutture');
+            container.innerHTML = strutture.map(s => `
+                <div class="recent-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1 fw-bold">${s.nome}</h6>
+                        <small class="text-muted">${s.tipo} • ${s.indirizzo.split(',')[0]}</small>
+                    </div>
+                    <a href="struttura.html?id=${s._id}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-arrow-right"></i> <span data-i18n="details_btn">Vedi dettagli</span>
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        // Mostra ultime verifiche
+        function mostraUltimeVerifiche(verifiche) {
+            const container = document.getElementById('ultimeVerifiche');
+            if (verifiche.length === 0) {
+                container.innerHTML = '<div class="text-center p-4 text-muted" data-i18n="no_verifications">Nessuna verifica ancora</div>';
+                return;
+            }
+            
+            container.innerHTML = verifiche.map(v => `
+                <div class="recent-item">
+                    <div class="d-flex justify-content-between">
+                        <strong>${v.userId?.username || 'Utente'}</strong>
+                        <span class="text-warning">${'⭐'.repeat(v.rating || 0)}</span>
+                    </div>
+                    <small class="text-muted">
+                        <span data-i18n="dog_weight_prefix">Cane di</span> ${v.pesoCane}kg • ${v.esito ? '✅ <span data-i18n="accepted">Accettato</span>' : '❌ <span data-i18n="not_accepted">Non accettato</span>'}
+                    </small>
+                </div>
+            `).join('');
+        }
+
+        // Mostra top strutture
+        function mostraTopStrutture(strutture) {
+            // Calcola rating per ogni struttura
+            const struttureConRating = strutture.map(s => ({
+                ...s,
+                ratingMedio: s.mediaRating || 0,
+                totVerifiche: s.totaleVerifiche || 0
+            }));
+            
+            // Ordina per rating
+            const top = struttureConRating
+                .filter(s => s.ratingMedio > 0)
+                .sort((a, b) => b.ratingMedio - a.ratingMedio)
+                .slice(0, 5);
+            
+            const container = document.getElementById('topStrutture');
+            if (top.length === 0) {
+                container.innerHTML = '<tr><td colspan="7" class="text-center" data-i18n="no_rating">Nessuna struttura con rating</td></tr>';
+                return;
+            }
+            
+            container.innerHTML = top.map((s, i) => `
+                <tr>
+                    <td><strong>#${i+1}</strong></td>
+                    <td>${s.nome}</td>
+                    <td><span class="badge bg-secondary">${s.tipo}</span></td>
+                    <td><span class="text-warning">${'⭐'.repeat(Math.round(s.ratingMedio))}</span> ${s.ratingMedio.toFixed(1)}</td>
+                    <td>${s.totVerifiche}</td>
+                    <td>${s.pesoMax || '<span data-i18n="na">N/D</span>'} kg</td>
+                    <td>
+                        <a href="struttura.html?id=${s._id}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i> <span data-i18n="details_btn">Vedi dettagli</span>
+                        </a>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Avvia
+        document.addEventListener('DOMContentLoaded', caricaDati);
+    </script>
+
+    <!-- Script per il form di certificazione -->
+    <script>
+    document.getElementById('certificationForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Mostra loading
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span><span data-i18n="sending">Invio in corso...</span>';
+        submitBtn.disabled = true;
+        
+        // Raccogli dati
+        const formData = {
+            nome: document.getElementById('strutturaNome').value,
+            tipo: document.getElementById('strutturaTipo').value,
+            email: document.getElementById('strutturaEmail').value,
+            telefono: document.getElementById('strutturaTel').value,
+            indirizzo: document.getElementById('strutturaIndirizzo').value,
+            sito: document.getElementById('strutturaSito').value,
+            servizi: {
+                ciotole: document.getElementById('servCiotole').checked,
+                cuscini: document.getElementById('servCuscini').checked,
+                giardino: document.getElementById('servGiardino').checked,
+                menupet: document.getElementById('servMenu').checked,
+                dogsitter: document.getElementById('servSitter').checked,
+                recinto: document.getElementById('servRecinto').checked
+            },
+            pesoMax: document.getElementById('pesoMax').value,
+            note: document.getElementById('note').value
+        };
+        
+        console.log('📦 Invio richiesta:', formData);
+        
+        try {
+            // Invia al backend
+            const response = await fetch(`${API_URL}/certificazioni`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const data = await response.json();
+            console.log('📨 Risposta:', data);
+            
+            if (response.ok) {
+                alert(t('request_success') || '✅ Grazie per la richiesta! Ti contatteremo entro 48 ore per organizzare la verifica.');
+                document.getElementById('certificationForm').reset();
+            } else {
+                alert(t('request_error') || '❌ Errore durante l\'invio. Riprova più tardi.');
+            }
+        } catch (error) {
+            console.error('🔥 Errore:', error);
+            alert(t('connection_error') || '❌ Errore di connessione. Verifica che il backend sia attivo.');
+        } finally {
+            // Ripristina bottone
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+    </script>
+
+    <!-- Script per gestire l'errore 'export' -->
+    <script>
+        window.exports = window.exports || {};
+    </script>
+
+    <!-- Modale di Login -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel" data-i18n="login_title">Accedi a BigPaw</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label" data-i18n="email_label">Indirizzo Email</label>
+                            <input type="email" class="form-control" id="loginEmail" required data-i18n-placeholder="email_placeholder" placeholder="info@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label" data-i18n="password_label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required data-i18n-placeholder="password_placeholder" placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" data-i18n="login_button">Accedi</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <p class="text-muted"><span data-i18n="no_account">Non hai un account?</span> <a href="#" data-bs-toggle="modal" data-bs-target="#registerModal" data-bs-dismiss="modal" data-i18n="register_link">Registrati</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale di Registrazione -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registerModalLabel" data-i18n="register_title">Crea un account BigPaw</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="registerName" class="form-label" data-i18n="username_label">Nome Utente</label>
+                            <input type="text" class="form-control" id="registerName" required data-i18n-placeholder="username_placeholder" placeholder="Mario Rossi">
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerEmail" class="form-label" data-i18n="email_label">Indirizzo Email</label>
+                            <input type="email" class="form-control" id="registerEmail" required data-i18n-placeholder="email_placeholder" placeholder="info@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerPassword" class="form-label" data-i18n="password_label">Password</label>
+                            <input type="password" class="form-control" id="registerPassword" required data-i18n-placeholder="password_placeholder" placeholder="••••••••">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="termsCheck" required>
+                            <label class="form-check-label" for="termsCheck" data-i18n="terms_label">Accetto i termini e condizioni</label>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100" data-i18n="register_button">Registrati</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <p class="text-muted"><span data-i18n="have_account">Sei già registrato?</span> <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal" data-i18n="login_link">Accedi</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script per gestire invio modali -->
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    alert(t('login_success') || 'Login effettuato con successo!');
+                    location.reload();
+                } else {
+                    alert(t('login_error') || 'Errore: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Errore login:', error);
+                alert(t('connection_error') || 'Errore di connessione al server.');
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert(t('register_success') || 'Registrazione completata! Ora puoi accedere.');
+                    bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
+                    new bootstrap.Modal(document.getElementById('loginModal')).show();
+                } else {
+                    alert(t('register_error') || 'Errore: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Errore registrazione:', error);
+                alert(t('connection_error') || 'Errore di connessione al server.');
+            }
+        });
+    </script>
+</body>
+</html>

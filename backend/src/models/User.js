@@ -69,3 +69,12 @@ const userSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('User', userSchema);
+const userSchema = new mongoose.Schema({
+    // ... altri campi (username, email, password, ecc.)
+    ruolo: {
+        type: String,
+        enum: ['visitatore', 'utente_base', 'verificatore', 'ambassador', 'founder'],
+        default: 'utente_base' // Questo è il ruolo di DEFAULT
+    },
+    // ... eventuali altri campi
+});
